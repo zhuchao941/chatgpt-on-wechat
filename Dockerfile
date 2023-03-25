@@ -32,6 +32,7 @@ RUN apk add --no-cache \
 WORKDIR ${BUILD_PREFIX}
 
 ADD ./entrypoint.sh /entrypoint.sh
+ADD ./config.py /config.py
 
 RUN chmod +x /entrypoint.sh \
     && adduser -D -h /home/noroot -u 1000 -s /bin/bash noroot \
