@@ -12,7 +12,7 @@ RUN apk add --no-cache \
         bash \
         curl \
         wget \
-    && export BUILD_GITHUB_TAG=${CHATGPT_ON_WECHAT_VER:-"1.0.5"} \
+    && export BUILD_GITHUB_TAG=${CHATGPT_ON_WECHAT_VER:-"1.0.4"} \
     && wget -t 3 -T 30 -nv -O chatgpt-on-wechat-${BUILD_GITHUB_TAG}.tar.gz \
             https://github.com/zhayujie/chatgpt-on-wechat/archive/refs/tags/${BUILD_GITHUB_TAG}.tar.gz \
     && tar -xzf chatgpt-on-wechat-${BUILD_GITHUB_TAG}.tar.gz \
