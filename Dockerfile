@@ -8,19 +8,26 @@ ARG CHATGPT_ON_WECHAT_VER
 ENV BUILD_PREFIX=/app \
     BUILD_OPEN_AI_API_KEY='YOUR OPEN AI KEY HERE'
 
-COPY chatgpt-on-wechat.tar.gz ./chatgpt-on-wechat.tar.gz
-
 RUN apk add --no-cache \
         bash \
-    && tar -xf chatgpt-on-wechat.tar.gz \
-    && mv chatgpt-on-wechat ${BUILD_PREFIX} \
+        curl \
+        wget \
+    && export BUILD_GITHUB_TAG=${CHATGPT_ON_WECHAT_VER:-`curl -sL "https://api.github.com/repos/zhayujie/chatgpt-on-wechat/releases/latest" | \
+        grep '"tag_name":' | \
+        sed -E 's/.*"([^"]+)".*/\1/'`} \
+    && wget -t 3 -T 30 -nv -O chatgpt-on-wechat-${BUILD_GITHUB_TAG}.tar.gz \
+            https://github.com/zhayujie/chatgpt-on-wechat/archive/refs/tags/${BUILD_GITHUB_TAG}.tar.gz \
+    && tar -xzf chatgpt-on-wechat-${BUILD_GITHUB_TAG}.tar.gz \
+    && mv chatgpt-on-wechat-${BUILD_GITHUB_TAG} ${BUILD_PREFIX} \
+    && rm chatgpt-on-wechat-${BUILD_GITHUB_TAG}.tar.gz \
     && cd ${BUILD_PREFIX} \
     && cp config-template.json ${BUILD_PREFIX}/config.json \
     && sed -i "2s/YOUR API KEY/${BUILD_OPEN_AI_API_KEY}/" ${BUILD_PREFIX}/config.json \
     && /usr/local/bin/python -m pip install --no-cache --upgrade pip \
     && pip install --no-cache   \
         itchat-uos==1.5.0.dev0  \
-        openai
+        openai                  \
+    && apk del curl wget
 
 WORKDIR ${BUILD_PREFIX}
 
